@@ -53,6 +53,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  Locale currentLang;
+
+  @override
+  void initState() {
+    super.initState();
+    new Future.delayed(Duration.zero, () async {
+      setState(() {
+        currentLang = FlutterI18n.currentLocale(context);
+      });
+    });
+  }
+
+  changeLanguage() {
+    setState(() {
+      currentLang = currentLang.languageCode == 'en'
+          ? new Locale('fr')
+          : new Locale('en');
+    });
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -100,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'You have pushed the button this many times:',
+              FlutterI18n.translate(context, "counter.text"),
             ),
             Text(
               '$_counter',
@@ -110,10 +129,17 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _switchLocale,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void _switchLocale() async {
+    print(FlutterI18n.currentLocale(context));
+    changeLanguage();
+    await FlutterI18n.refresh(context, currentLang);
+    print(FlutterI18n.currentLocale(context));
   }
 }
